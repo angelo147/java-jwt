@@ -5,6 +5,7 @@
 [![CircleCI](https://img.shields.io/circleci/project/github/auth0/java-jwt.svg?style=flat-square)](https://circleci.com/gh/auth0/java-jwt/tree/master)
 [![Coverage Status](https://img.shields.io/codecov/c/github/auth0/java-jwt.svg?style=flat-square)](https://codecov.io/github/auth0/java-jwt)
 [![License](http://img.shields.io/:license-mit-blue.svg?style=flat)](http://doge.mit-license.org)
+[![Javadoc](https://javadoc.io/badge2/com.auth0/java-jwt/javadoc.svg)](https://javadoc.io/doc/com.auth0/java-jwt/latest/index.html)
 
 A Java implementation of [JSON Web Token (JWT) - RFC 7519](https://tools.ietf.org/html/rfc7519).
 
@@ -12,20 +13,22 @@ If you're looking for an **Android** version of the JWT Decoder take a look at o
 
 ## Installation
 
+The library is available on both Maven Central and Bintray, and the Javadoc is published [here](https://javadoc.io/doc/com.auth0/java-jwt/latest/index.html).
+ 
 ### Maven
 
 ```xml
 <dependency>
     <groupId>com.auth0</groupId>
     <artifactId>java-jwt</artifactId>
-    <version>3.8.3</version>
+    <version>3.10.0</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```gradle
-implementation 'com.auth0:java-jwt:3.8.3'
+implementation 'com.auth0:java-jwt:3.10.0'
 ```
 
 ## Available Algorithms
@@ -64,6 +67,8 @@ RSAPublicKey publicKey = //Get the key instance
 RSAPrivateKey privateKey = //Get the key instance
 Algorithm algorithmRS = Algorithm.RSA256(publicKey, privateKey);
 ```
+
+> Note: How you obtain or read keys is not in the scope of this library. For an example of how you might implement this, see [this gist](https://gist.github.com/lbalmaceda/9a0c7890c2965826c04119dcfb1a5469).
 
 #### Using a KeyProvider:
 

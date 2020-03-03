@@ -171,6 +171,28 @@ public class JWTVerifierTest {
     }
 
     @Test
+    public void shouldThrowWhenExpectedArrayClaimIsMissing() throws Exception {
+        exception.expect(InvalidClaimException.class);
+        exception.expectMessage("The Claim 'missing' value doesn't match the required one.");
+        String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcnJheSI6WzEsMiwzXX0.wKNFBcMdwIpdF9rXRxvexrzSM6umgSFqRO1WZj992YM";
+        JWTVerifier.init(Algorithm.HMAC256("secret"))
+                .withArrayClaim("missing", 1, 2, 3)
+                .build()
+                .verify(token);
+    }
+
+    @Test
+    public void shouldThrowWhenExpectedClaimIsMissing() throws Exception {
+        exception.expect(InvalidClaimException.class);
+        exception.expectMessage("The Claim 'missing' value doesn't match the required one.");
+        String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGFpbSI6InRleHQifQ.aZ27Ze35VvTqxpaSIK5ZcnYHr4SrvANlUbDR8fw9qsQ";
+        JWTVerifier.init(Algorithm.HMAC256("secret"))
+                .withClaim("missing", "text")
+                .build()
+                .verify(token);
+    }
+
+    @Test
     public void shouldThrowOnInvalidCustomClaimValueOfTypeString() throws Exception {
         exception.expect(InvalidClaimException.class);
         exception.expectMessage("The Claim 'name' value doesn't match the required one.");
@@ -320,6 +342,39 @@ public class JWTVerifierTest {
         String token = "eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjpbMSwyLDNdfQ.UEuMKRQYrzKAiPpPLhIVawWkKWA1zj0_GderrWUIyFE";
         DecodedJWT jwt = JWTVerifier.init(Algorithm.HMAC256("secret"))
                 .withArrayClaim("name", 1, 2, 3)
+                .build()
+                .verify(token);
+
+        assertThat(jwt, is(notNullValue()));
+    }
+
+    @Test
+    public void shouldValidateCustomArrayClaimOfTypeLong() throws Exception {
+        String token = "eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjpbNTAwMDAwMDAwMDAxLDUwMDAwMDAwMDAwMiw1MDAwMDAwMDAwMDNdfQ.vzV7S0gbV9ZAVxChuIt4XZuSVTxMH536rFmoHzxmayM";
+        DecodedJWT jwt = JWTVerifier.init(Algorithm.HMAC256("secret"))
+                .withArrayClaim("name", 500000000001L, 500000000002L, 500000000003L)
+                .build()
+                .verify(token);
+
+        assertThat(jwt, is(notNullValue()));
+    }
+
+    @Test
+    public void shouldValidateCustomArrayClaimOfTypeLongWhenValueIsInteger() throws Exception {
+        String token = "eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjpbMSwyLDNdfQ.UEuMKRQYrzKAiPpPLhIVawWkKWA1zj0_GderrWUIyFE";
+        DecodedJWT jwt = JWTVerifier.init(Algorithm.HMAC256("secret"))
+                .withArrayClaim("name", 1L, 2L, 3L)
+                .build()
+                .verify(token);
+
+        assertThat(jwt, is(notNullValue()));
+    }
+
+    @Test
+    public void shouldValidateCustomArrayClaimOfTypeLongWhenValueIsIntegerAndLong() throws Exception {
+        String token = "eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjpbMSw1MDAwMDAwMDAwMDIsNTAwMDAwMDAwMDAzXX0.PQjb2rPPpYjM2sItZEzZcjS2YbfPCp6xksTSPjpjTQA";
+        DecodedJWT jwt = JWTVerifier.init(Algorithm.HMAC256("secret"))
+                .withArrayClaim("name", 1L, 500000000002L, 500000000003L)
                 .build()
                 .verify(token);
 
@@ -514,8 +569,8 @@ public class JWTVerifierTest {
                 .acceptNotBefore(-1);
     }
 
-// Issued At with future date
-    @Test (expected = InvalidClaimException.class)
+    // Issued At with future date
+    @Test(expected = InvalidClaimException.class)
     public void shouldThrowOnFutureIssuedAt() throws Exception {
         Clock clock = mock(Clock.class);
         when(clock.getToday()).thenReturn(new Date(DATE_TOKEN_MS_VALUE - 1000));
